@@ -1,0 +1,120 @@
+{{define "playlists"}}
+<section class="page" data-page="playlists">
+    <header class="page-head">
+        <h1 class="page-title">Playlists</h1>
+        <p class="page-sub">{{len .Playlists}} playlists</p>
+    </header>
+    {{if .Playlists}}
+    <div class="card-grid">{{range .Playlists}}{{template "playlist-card" .}}{{end}}</div>
+    {{else}}
+    <div class="empty-hint">No playlists yet.</div>
+    {{end}}
+</section>
+{{end}}
+
+{{define "playlist-detail"}}
+<section class="page detail" data-page="playlists">
+    <header class="detail-head">
+        <img class="detail-art" src="{{if .Playlist.Image}}{{.Playlist.Image}}{{else}}/static/img/placeholder.svg{{end}}" alt="">
+        <div class="detail-meta">
+            <div class="detail-kind">Playlist</div>
+            <h1 class="detail-title">{{.Playlist.Title}}</h1>
+            {{if .Playlist.Description}}<p class="detail-desc">{{.Playlist.Description}}</p>{{end}}
+            <div class="detail-count">{{len .Tracks}} tracks</div>
+            <div class="detail-actions">
+                <button class="btn-accent" hx-post="/api/play/playlist/{{.Playlist.ID}}" hx-swap="none">{{template "icon-play" .}}<span>Play</span></button>
+                <button class="btn-pill" hx-post="/api/shuffle" hx-swap="none">{{template "icon-shuffle" .}}<span>Shuffle</span></button>
+            </div>
+        </div>
+    </header>
+    {{template "track-list" dict "Tracks" .Tracks "Context" "playlist" "ContextID" .Playlist.ID}}
+</section>
+{{end}}
+
+{{define "album-detail"}}
+<section class="page detail" data-page="browse">
+    <header class="detail-head">
+        <img class="detail-art" src="{{if .Album.Image}}{{.Album.Image}}{{else}}/static/img/placeholder.svg{{end}}" alt="">
+        <div class="detail-meta">
+            <div class="detail-kind">Album</div>
+            <h1 class="detail-title">{{.Album.Name}}</h1>
+            <p class="detail-desc">{{.Album.Artist.Name}}{{if .Album.Year}} · {{.Album.Year}}{{end}}</p>
+            <div class="detail-count">{{len .Tracks}} tracks</div>
+            <div class="detail-actions">
+                <button class="btn-accent" hx-post="/api/play/album/{{.Album.ID}}" hx-swap="none">{{template "icon-play" .}}<span>Play</span></button>
+                <button class="btn-pill" hx-post="/api/favorite" hx-vals='{"mediaType":"Album","id":"{{.Album.ID}}","favorite":"true"}' hx-swap="none">{{template "icon-heart" .}}<span>Favorite</span></button>
+            </div>
+        </div>
+    </header>
+    {{template "track-list" dict "Tracks" .Tracks "Context" "album" "ContextID" .Album.ID}}
+</section>
+{{end}}
+
+{{define "artist-detail"}}
+<section class="page detail" data-page="browse">
+    <header class="detail-head">
+        <img class="detail-art round" src="{{if .Artist.Image}}{{.Artist.Image}}{{else}}/static/img/placeholder.svg{{end}}" alt="">
+        <div class="detail-meta">
+            <div class="detail-kind">Artist</div>
+            <h1 class="detail-title">{{.Artist.Name}}</h1>
+            <div class="detail-actions">
+                <button class="btn-accent" hx-post="/api/play/artist/{{.Artist.ID}}" hx-swap="none">{{template "icon-play" .}}<span>Play top tracks</span></button>
+                <button class="btn-pill" hx-post="/api/favorite" hx-vals='{"mediaType":"Artist","id":"{{.Artist.ID}}","favorite":"true"}' hx-swap="none">{{template "icon-heart" .}}<span>Favorite</span></button>
+            </div>
+        </div>
+    </header>
+    <div class="section"><h2 class="section-title">Popular</h2>
+    {{template "track-list" dict "Tracks" .Tracks "Context" "artist" "ContextID" .Artist.ID}}
+    </div>
+</section>
+{{end}}
+
+{{define "favorites"}}
+<section class="page" data-page="favorites">
+    <header class="page-head">
+        <h1 class="page-title">Favorites</h1>
+    </header>
+    {{if .Tracks}}
+    <div class="section">
+        <div class="section-head">
+            <h2 class="section-title">Songs</h2>
+            <button class="btn-pill" hx-post="/api/play/favorites/tracks" hx-swap="none">{{template "icon-play" .}}<span>Play all</span></button>
+        </div>
+        {{template "track-list" dict "Tracks" .Tracks "Context" "favorites" "ContextID" "tracks"}}
+    </div>
+    {{end}}
+    {{if .FavAlbums}}
+    <div class="section"><h2 class="section-title">Albums</h2>
+        <div class="card-grid">{{range .FavAlbums}}{{template "album-card" .}}{{end}}</div>
+    </div>
+    {{end}}
+    {{if .FavArtists}}
+    <div class="section"><h2 class="section-title">Artists</h2>
+        <div class="card-grid">{{range .FavArtists}}{{template "artist-card" .}}{{end}}</div>
+    </div>
+    {{end}}
+    {{if and (not .Tracks) (not .FavAlbums) (not .FavArtists)}}
+    <div class="empty-hint">You have no favorites yet.</div>
+    {{end}}
+</section>
+{{end}}
+
+{{define "lyrics"}}
+<div class="modal-backdrop" onclick="ysCloseModal(event)">
+    <div class="modal glass" onclick="event.stopPropagation()">
+        <div class="modal-head">
+            <h2>Lyrics</h2>
+            <button class="icon-btn" onclick="ysCloseModal()">✕</button>
+        </div>
+        <div class="lyrics-body">
+            {{if .Lyrics.Lines}}
+                {{range .Lyrics.Lines}}<p class="lyric-line" data-ms="{{.StartMs}}">{{.Text}}</p>{{end}}
+            {{else if .Lyrics.Plain}}
+                <pre class="lyric-plain">{{.Lyrics.Plain}}</pre>
+            {{else}}
+                <p class="empty-hint">No lyrics available for this track.</p>
+            {{end}}
+        </div>
+    </div>
+</div>
+{{end}}

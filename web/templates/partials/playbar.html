@@ -1,0 +1,53 @@
+{{define "playbar"}}
+{{$t := .Player.CurrentTrack}}
+<div class="pb-left">
+    <img id="pb-art" class="pb-art" src="{{if $t}}{{if $t.Image}}{{$t.Image}}{{else}}/static/img/placeholder.svg{{end}}{{else}}/static/img/placeholder.svg{{end}}" alt="">
+    <div class="pb-meta">
+        <div id="pb-title" class="pb-title">{{if $t}}{{$t.Title}}{{else}}—{{end}}</div>
+        <div id="pb-artist" class="pb-artist">{{if $t}}{{$t.ArtistNames}}{{end}}</div>
+    </div>
+</div>
+
+<div class="pb-center">
+    <div class="pb-controls">
+        <button id="btn-shuffle" class="pb-btn {{if .Player.Shuffle}}active{{end}}" hx-post="/api/shuffle" hx-swap="none" title="Shuffle">
+            {{template "icon-shuffle" .}}
+        </button>
+        <button class="pb-btn" hx-post="/api/previous" hx-swap="none" title="Previous">
+            {{template "icon-prev" .}}
+        </button>
+        <button id="btn-play" class="pb-btn pb-play {{if .Player.Playing}}playing{{end}}" hx-post="/api/toggle" hx-swap="none" title="Play/Pause">
+            <span class="ic-play">{{template "icon-play" .}}</span>
+            <span class="ic-pause">{{template "icon-pause" .}}</span>
+        </button>
+        <button class="pb-btn" hx-post="/api/next" hx-swap="none" title="Next">
+            {{template "icon-next" .}}
+        </button>
+        <button id="btn-repeat" class="pb-btn {{if ne .Player.Repeat "off"}}active{{end}}" data-repeat="{{.Player.Repeat}}" hx-post="/api/repeat" hx-swap="none" title="Repeat">
+            <span class="ic-repeat">{{template "icon-repeat" .}}</span>
+            <span class="ic-repeat-one">{{template "icon-repeat-one" .}}</span>
+        </button>
+    </div>
+
+    <div class="pb-progress">
+        <span id="time-current" class="pb-time">0:00</span>
+        <div id="progress-bar" class="progress-bar">
+            <div id="progress-fill" class="progress-fill"></div>
+            <div id="progress-knob" class="progress-knob"></div>
+        </div>
+        <span id="time-total" class="pb-time">{{if $t}}{{fmtDuration $t.Duration}}{{else}}0:00{{end}}</span>
+    </div>
+</div>
+
+<div class="pb-right">
+    <button id="btn-mute" class="pb-btn {{if .Player.Muted}}muted{{end}}" hx-post="/api/mute" hx-swap="none" title="Mute">
+        <span class="ic-volume">{{template "icon-volume" .}}</span>
+        <span class="ic-mute">{{template "icon-mute" .}}</span>
+    </button>
+    <input id="vol-slider" class="vol-slider" type="range" min="0" max="100" value="{{.Player.Volume}}" aria-label="Volume">
+
+    <button class="pb-btn" onclick="ysToggleFullscreen()" title="Fullscreen">
+        {{template "icon-fullscreen" .}}
+    </button>
+</div>
+{{end}}

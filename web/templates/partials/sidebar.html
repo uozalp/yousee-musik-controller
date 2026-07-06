@@ -1,0 +1,43 @@
+{{define "sidebar"}}
+<aside class="sidebar">
+    <div class="sidebar-logo">
+        <span class="logo-mark">♫</span>
+        <span class="logo-text">YouSee<span class="logo-accent"> Musik</span></span>
+    </div>
+
+    <nav class="nav" hx-target="#main-content" hx-swap="innerHTML show:window:top">
+        <a class="nav-item {{if eq .Nav "nowplaying"}}active{{end}}" data-nav="nowplaying"
+           hx-get="/partials/nowplaying" hx-push-url="/">
+            {{template "icon-play-circle" .}}<span>Now Playing</span>
+        </a>
+        <a class="nav-item {{if eq .Nav "search"}}active{{end}}" data-nav="search"
+           hx-get="/partials/search" hx-push-url="/search">
+            {{template "icon-search" .}}<span>Search</span>
+        </a>
+        <a class="nav-item {{if eq .Nav "browse"}}active{{end}}" data-nav="browse"
+           hx-get="/partials/browse" hx-push-url="/browse">
+            {{template "icon-compass" .}}<span>Browse</span>
+        </a>
+        <a class="nav-item {{if eq .Nav "playlists"}}active{{end}}" data-nav="playlists"
+           hx-get="/partials/playlists" hx-push-url="/playlists">
+            {{template "icon-list" .}}<span>Playlists</span>
+        </a>
+        <a class="nav-item {{if eq .Nav "favorites"}}active{{end}}" data-nav="favorites"
+           hx-get="/partials/favorites" hx-push-url="/favorites">
+            {{template "icon-heart" .}}<span>Favorites</span>
+        </a>
+        <a class="nav-item {{if eq .Nav "radio"}}active{{end}}" data-nav="radio"
+           hx-get="/partials/radio" hx-push-url="/radio">
+            {{template "icon-radio" .}}<span>Radio</span>
+        </a>
+    </nav>
+
+    <div class="sidebar-status glass">
+        <div class="status-label">Server connection</div>
+        <div class="status-row">
+            <span class="signal" id="conn-indicator" data-connected="{{.Player.Connected}}"></span>
+            <span id="conn-text">{{if .Player.Connected}}Connected{{else}}Disconnected{{end}}</span>
+        </div>
+    </div>
+</aside>
+{{end}}

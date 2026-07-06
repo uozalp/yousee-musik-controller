@@ -1,0 +1,60 @@
+{{define "browse"}}
+<section class="page" data-page="browse">
+    <header class="page-head">
+        <h1 class="page-title">Browse</h1>
+        <p class="page-sub">Recommended for you</p>
+    </header>
+    {{if .Recommendations}}
+    {{range .Recommendations}}
+    <div class="section">
+        <div class="section-head">
+            <h2 class="section-title">{{.Name}}</h2>
+            {{if .Subtitle}}<span class="section-sub">{{.Subtitle}}</span>{{end}}
+        </div>
+        {{if .Tracks}}
+        <div class="card-grid">
+            {{range .Tracks}}
+            <div class="card" hx-post="/api/play/track/{{.ID}}" hx-swap="none">
+                <div class="card-art-wrap">
+                    <img class="card-art" src="{{if .Image}}{{.Image}}{{else}}/static/img/placeholder.svg{{end}}" alt="">
+                    <button class="card-play">{{template "icon-play" .}}</button>
+                </div>
+                <div class="card-title">{{.Title}}</div>
+                <div class="card-sub">{{.ArtistNames}}</div>
+            </div>
+            {{end}}
+        </div>
+        {{end}}
+    </div>
+    {{end}}
+    {{else}}
+    <div class="empty-hint">No recommendations available.</div>
+    {{end}}
+</section>
+{{end}}
+
+{{define "radio"}}
+<section class="page" data-page="radio">
+    <header class="page-head">
+        <h1 class="page-title">Radio</h1>
+        <p class="page-sub">Endless mixes based on your taste</p>
+    </header>
+    {{if .Recommendations}}
+    <div class="card-grid">
+        {{range .Recommendations}}
+        <div class="card radio-card" hx-post="/api/play/radio/{{.ID}}" hx-swap="none">
+            <div class="card-art-wrap radio">
+                {{if .Tracks}}<img class="card-art" src="{{if (index .Tracks 0).Image}}{{(index .Tracks 0).Image}}{{else}}/static/img/placeholder.svg{{end}}" alt="">{{end}}
+                <div class="radio-badge">{{template "icon-radio" .}}</div>
+                <button class="card-play">{{template "icon-play" .}}</button>
+            </div>
+            <div class="card-title">{{.Name}}</div>
+            <div class="card-sub">{{len .Tracks}} tracks</div>
+        </div>
+        {{end}}
+    </div>
+    {{else}}
+    <div class="empty-hint">No radio stations available.</div>
+    {{end}}
+</section>
+{{end}}

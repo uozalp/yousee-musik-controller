@@ -1,0 +1,42 @@
+{{define "nowplaying"}}
+<section class="nowplaying" data-page="nowplaying">
+    {{if .Player.CurrentTrack}}
+    {{$t := .Player.CurrentTrack}}
+    <div class="np-art-wrap">
+        <img id="np-art" class="np-art {{if .Player.Playing}}playing{{end}}"
+             src="{{if $t.Image}}{{$t.Image}}{{else}}/static/img/placeholder.svg{{end}}" alt="Album art">
+    </div>
+
+    <div class="np-info">
+        <div class="np-badge">
+            <span id="np-equalizer" class="{{if not .Player.Playing}}paused{{end}}">{{template "equalizer" .}}</span>
+            <span>Now Playing</span>
+        </div>
+        <h1 id="np-title" class="np-title">{{$t.Title}}</h1>
+        <div id="np-artist" class="np-artist">{{$t.ArtistNames}}</div>
+        <div id="np-album" class="np-album">{{$t.Album.Name}}{{if $t.Album.Year}} · {{$t.Album.Year}}{{end}}</div>
+
+        <div class="np-actions">
+            <button id="np-favorite-btn" type="button" class="btn-pill" data-track-id="{{$t.ID}}" data-favorited="false"
+                    onclick="ysToggleFavorite(this)" title="Favorite">
+                {{template "icon-heart" .}}<span>Favorite</span>
+            </button>
+            <button class="btn-pill" hx-get="/partials/lyrics/{{$t.ID}}" hx-target="#modal" hx-swap="innerHTML" title="Lyrics">
+                {{template "icon-lyrics" .}}<span>Lyrics</span>
+            </button>
+            <button class="btn-pill" onclick="ysShare('{{$t.Share}}')" title="Share">
+                {{template "icon-share" .}}<span>Share</span>
+            </button>
+        </div>
+    </div>
+    {{else}}
+    <div class="np-empty">
+        <div class="np-empty-mark">♫</div>
+        <h1>Nothing playing</h1>
+        <p>Pick a track from Browse, Search or your Playlists to get started.</p>
+        <button class="btn-accent" hx-get="/partials/browse" hx-target="#main-content" hx-swap="innerHTML">Browse music</button>
+    </div>
+    {{end}}
+</section>
+<div id="modal"></div>
+{{end}}

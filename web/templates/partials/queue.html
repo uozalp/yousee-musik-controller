@@ -1,0 +1,35 @@
+{{define "queue"}}
+<div class="queue-inner">
+    <div class="queue-header">
+        <div>
+            <div class="queue-title">Next in Queue</div>
+            <div class="queue-sub">{{len .Player.Queue}} tracks</div>
+        </div>
+        <button class="btn-ghost" hx-post="/api/queue/clear" hx-swap="none" title="Clear queue">
+            {{template "icon-trash" .}}<span>Clear</span>
+        </button>
+    </div>
+
+    <div class="queue-list">
+        {{if .Player.Queue}}
+        {{range $i, $t := .Player.Queue}}
+        <div class="queue-item {{if eq $i $.Player.QueueIndex}}current{{end}}"
+             hx-post="/api/queue/index/{{$i}}" hx-swap="none">
+            <img class="queue-thumb" src="{{if $t.Image}}{{$t.Image}}{{else}}/static/img/placeholder.svg{{end}}" alt="">
+            <div class="queue-meta">
+                <div class="queue-track">{{$t.Title}}</div>
+                <div class="queue-artist">{{$t.ArtistNames}}</div>
+            </div>
+            {{if eq $i $.Player.QueueIndex}}
+            <span class="queue-eq">{{template "equalizer" $}}</span>
+            {{else}}
+            <div class="queue-dur">{{fmtDuration $t.Duration}}</div>
+            {{end}}
+        </div>
+        {{end}}
+        {{else}}
+        <div class="queue-empty">Your queue is empty.</div>
+        {{end}}
+    </div>
+</div>
+{{end}}

@@ -1,0 +1,42 @@
+{{define "base"}}<!DOCTYPE html>
+<html lang="en" data-theme="yousee">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>YouSee Musik</title>
+    <link rel="preconnect" href="https://picsum.photos">
+    <script src="https://unpkg.com/htmx.org@1.9.12" integrity="sha384-ujb1lZYygJmzgSwoxRggbCHcjc0rB2XoQrxeTUQyRjrOnlCoYta87iKBWq3EsdM2" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.13/dist/hls.min.js"></script>
+    <link rel="stylesheet" href="/static/css/app.css">
+</head>
+<body>
+<div id="app" class="app-shell">
+
+    {{template "sidebar" .}}
+
+    <main id="main-content" class="main-content">
+        {{if eq .Nav "search"}}{{template "search" .}}
+        {{else if eq .Nav "browse"}}{{template "browse" .}}
+        {{else if eq .Nav "playlists"}}{{template "playlists" .}}
+        {{else if eq .Nav "favorites"}}{{template "favorites" .}}
+        {{else if eq .Nav "radio"}}{{template "radio" .}}
+        {{else}}{{template "nowplaying" .}}{{end}}
+    </main>
+
+    <aside id="queue-panel" class="queue-panel">
+        {{template "queue" .}}
+    </aside>
+
+    <footer id="playbar" class="playbar">
+        {{template "playbar" .}}
+    </footer>
+
+</div>
+
+<audio id="player-audio"></audio>
+
+<div id="toast" class="toast-container" aria-live="polite"></div>
+
+<script src="/static/js/app.js"></script>
+</body>
+</html>{{end}}

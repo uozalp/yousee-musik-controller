@@ -1,0 +1,53 @@
+{{define "search"}}
+<section class="page" data-page="search">
+    <header class="page-head">
+        <h1 class="page-title">Search</h1>
+    </header>
+    <div class="search-box glass">
+        {{template "icon-search" .}}
+        <input class="search-input" type="search" name="q" placeholder="Songs, artists, albums, playlists…"
+               value="{{.Query}}" autocomplete="off"
+               hx-get="/partials/search/results" hx-target="#search-results" hx-swap="innerHTML"
+               hx-trigger="input changed delay:300ms, search"
+               hx-indicator="#search-spin">
+        <span id="search-spin" class="spinner htmx-indicator"></span>
+    </div>
+    <div id="search-results" class="search-results">
+        {{if .Query}}{{template "search-results" .}}{{else}}
+        <div class="empty-hint">Start typing to search YouSee Musik.</div>
+        {{end}}
+    </div>
+</section>
+{{end}}
+
+{{define "search-results"}}
+{{if .Search}}
+    {{if .Search.Tracks}}
+    <div class="section">
+        <h2 class="section-title">Songs</h2>
+        {{template "track-list" dict "Tracks" .Search.Tracks "Context" "" "ContextID" ""}}
+    </div>
+    {{end}}
+    {{if .Search.Artists}}
+    <div class="section">
+        <h2 class="section-title">Artists</h2>
+        <div class="card-grid">{{range .Search.Artists}}{{template "artist-card" .}}{{end}}</div>
+    </div>
+    {{end}}
+    {{if .Search.Albums}}
+    <div class="section">
+        <h2 class="section-title">Albums</h2>
+        <div class="card-grid">{{range .Search.Albums}}{{template "album-card" .}}{{end}}</div>
+    </div>
+    {{end}}
+    {{if .Search.Playlists}}
+    <div class="section">
+        <h2 class="section-title">Playlists</h2>
+        <div class="card-grid">{{range .Search.Playlists}}{{template "playlist-card" .}}{{end}}</div>
+    </div>
+    {{end}}
+    {{if and (not .Search.Tracks) (not .Search.Albums) (not .Search.Artists) (not .Search.Playlists)}}
+    <div class="empty-hint">No results for “{{.Query}}”.</div>
+    {{end}}
+{{end}}
+{{end}}

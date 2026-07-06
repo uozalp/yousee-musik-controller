@@ -1,0 +1,58 @@
+{{define "track-list"}}
+<div class="track-list">
+    {{$ctx := .Context}}{{$cid := .ContextID}}
+    {{range $i, $t := .Tracks}}
+    <div class="track-row" tabindex="0"
+        {{if $ctx}}
+         hx-post="/api/play/{{$ctx}}/{{$cid}}" hx-vals='{"index":"{{$i}}"}' hx-swap="none"
+        {{else}}
+         hx-post="/api/play/track/{{$t.ID}}" hx-swap="none"
+        {{end}}>
+        <div class="track-index"><span class="num">{{add $i 1}}</span>{{template "icon-play" $}}</div>
+        <img class="track-thumb" src="{{if $t.Image}}{{$t.Image}}{{else}}/static/img/placeholder.svg{{end}}" alt="">
+        <div class="track-main">
+            <div class="track-title">{{$t.Title}}</div>
+            <div class="track-artist">{{$t.ArtistNames}}</div>
+        </div>
+        <div class="track-album">{{$t.Album.Name}}</div>
+        <div class="track-actions" onclick="event.stopPropagation()">
+            <button class="icon-btn" hx-post="/api/favorite" hx-vals='{"mediaType":"Track","id":"{{$t.ID}}","favorite":"true"}' hx-swap="none" title="Favorite">{{template "icon-heart" $}}</button>
+            <button class="icon-btn" hx-post="/api/queue/add/track/{{$t.ID}}" hx-swap="none" title="Add to queue">{{template "icon-add" $}}</button>
+        </div>
+        <div class="track-dur">{{fmtDuration $t.Duration}}</div>
+    </div>
+    {{end}}
+</div>
+{{end}}
+
+{{define "album-card"}}
+<div class="card" hx-get="/partials/album/{{.ID}}" hx-target="#main-content" hx-swap="innerHTML show:window:top">
+    <div class="card-art-wrap">
+        <img class="card-art" src="{{if .Image}}{{.Image}}{{else}}/static/img/placeholder.svg{{end}}" alt="">
+        <button class="card-play" hx-post="/api/play/album/{{.ID}}" hx-swap="none" onclick="event.stopPropagation()">{{template "icon-play" .}}</button>
+    </div>
+    <div class="card-title">{{.Name}}</div>
+    <div class="card-sub">{{.Artist.Name}}</div>
+</div>
+{{end}}
+
+{{define "artist-card"}}
+<div class="card" hx-get="/partials/artist/{{.ID}}" hx-target="#main-content" hx-swap="innerHTML show:window:top">
+    <div class="card-art-wrap round">
+        <img class="card-art" src="{{if .Image}}{{.Image}}{{else}}/static/img/placeholder.svg{{end}}" alt="">
+    </div>
+    <div class="card-title center">{{.Name}}</div>
+    <div class="card-sub center">Artist</div>
+</div>
+{{end}}
+
+{{define "playlist-card"}}
+<div class="card" hx-get="/partials/playlist/{{.ID}}" hx-target="#main-content" hx-swap="innerHTML show:window:top">
+    <div class="card-art-wrap">
+        <img class="card-art" src="{{if .Image}}{{.Image}}{{else}}/static/img/placeholder.svg{{end}}" alt="">
+        <button class="card-play" hx-post="/api/play/playlist/{{.ID}}" hx-swap="none" onclick="event.stopPropagation()">{{template "icon-play" .}}</button>
+    </div>
+    <div class="card-title">{{.Title}}</div>
+    <div class="card-sub">{{.TracksCount}} tracks</div>
+</div>
+{{end}}
