@@ -2,6 +2,8 @@
 
 A modern, touch-optimized music controller web application designed for **12" landscape touchscreens**. Built with Go and HTMX, it provides real-time playback control for the **YouSee Musik** streaming service with a responsive, glass-morphism UI.
 
+![Demo on 12" Screen](image.png)
+
 ## Overview
 
 The application features a clean separation of concerns with a Go backend serving an HTMX + Tailwind CSS interface. All playback state is managed server-side and synchronized to clients in real-time via WebSockets, ensuring a single source of truth and simplifying the client architecture.
